@@ -4,10 +4,48 @@ MuckRack take home assignment. Create a Django web application to scrape a web p
 
 ## Quickstart
 
+To quickly run a development version of the application:
+
 ```bash
 docker-compose build
-docker-compose run web python manage.py migrate
 docker-compose up
+```
+
+### Developer Setup
+
+Manual setup of persistence volumes.
+
+```bash
+# postgres image
+docker pull postgres:13.0-alpine
+mkdir -p ${HOME}/docker/volumes/postgres_data
+docker run \
+  --rm \
+  --name postgresdb \
+  --env POSTGRES_DB=semscrape-db \
+  --env POSTGRES_USER=postgres \
+  --env POSTGRES_PASSWORD=postgres \
+  --publish 5432:5432 \
+  --volume ${HOME}/docker/volumes/postgres_data:/var/lib/postgresql/data \
+  --detach \
+  postgres:13.0-alpine
+
+# redis image
+docker pull redis:6.0.9-alpine3.12
+mkdir -p ${HOME}/docker/volumes/redis_data ${HOME}/docker/volumes/redis_conf
+docker run \
+  --rm \
+  --name redis \
+  --env REDIS_REPLICATION_MODE=master \
+  --publish 6379:6379 \
+  --volume ${HOME}/docker/volumes/redis_data:/var/lib/redis \
+  --volume ${HOME}/docker/volumes/redis_conf:/usr/local/etc/redis/redis.conf \
+  --detach \
+  redis:6.0.9-alpine3.12 \
+  redis-server
+
+# celery worker (not detached)
+celery -A semscrape worker --loglevel=INFO
 ```
 
 ## License
