@@ -13,9 +13,15 @@ docker-compose up
 
 ### Developer Setup
 
-Manual setup of persistence volumes.
+Manual setup of persistence volumes, use Python virtual environment.
 
 ```bash
+# setup venv
+python3 -m venv venv
+source venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt
+
 # postgres image
 docker pull postgres:13.0-alpine
 mkdir -p ${HOME}/docker/volumes/postgres_data
@@ -45,7 +51,19 @@ docker run \
   redis-server
 
 # celery worker (not detached)
-celery -A semscrape worker --loglevel=INFO
+celery -A semscrape worker --beat --loglevel=INFO
+```
+
+#### Testing
+
+```bash
+# only unit tests
+python3 manage.py test
+
+# For coverage
+coverage run --source="." --omit=venv/* manage.py test
+coverage html
+firefox htmlcov/index.html
 ```
 
 ## License

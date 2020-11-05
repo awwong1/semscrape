@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0" version="2.0">
+    <channel>
+        <title>Missing Key</title>
+        <link>http://0.0.0.0/?stub=truelink>
+        <description>Missing link key</description>
+        <language>en-us</language>
+        <pubDate>Thu, 04 Oct 2019 05:36:36 EDT</pubDate>
+        <ttl>5</ttl>
+        <item>
+            <title>7 things to know before the bell</title>
+            <guid isPermaLink="false">http://money.cnn.com/2018/10/04/investing/premarket-stocks-trading/index.html?section=money_topstories</guid>
+            <media:thumbnail url="http://i2.cdn.turner.com/money/dam/assets/170920161756-facebook-logo-wall-120x90.jpg" height="90" width="120" />
+            <description>Read full story for latest details.&lt;img src="http://feeds.feedburner.com/~r/rss/money_topstories/~4/ojHifu3N_y4" height="1" width="1" alt=""/&gt;</description>
+            <pubDate>Thu, 04 Oct 2018 05:10:29 EDT</pubDate>
+            <feedburner:origLink>http://money.cnn.com/2018/10/04/investing/premarket-stocks-trading/index.html?section=money_topstories</feedburner:origLink>
+        </item>
+    </channel>
+</rss>

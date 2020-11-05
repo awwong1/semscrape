@@ -25,7 +25,6 @@ services:
       - /bin/bash
       - -c
       - |
-        celery -A semscrape worker --loglevel=INFO &
         python manage.py migrate
         python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -36,5 +35,19 @@ services:
       - postgresdb
       - redis
     depends_on:
+      - postgresdb
+      - redis
+  celery:
+    build: .
+    environment:
+      - POSTGRES_HOST=postgresdb
+      - REDIS_HOST=redis
+    command:
+      celery -A semscrape worker --beat --loglevel=INFO
+    links:
+      - redis
+      - postgresdb
+    depends_on:
+      - web
       - postgresdb
       - redis

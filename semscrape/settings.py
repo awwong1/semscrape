@@ -129,7 +129,14 @@ STATIC_URL = "/static/"
 # Celery configuration options
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379"
-CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:6379"
+CELERY_TASK_IGNORE_RESULT = True
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BEAT_SCHEDULE = {
+    "dispatch_rss_feed_crawlers": {
+        "task": "crawler.tasks.dispatch_crawl_feeds",
+        "schedule": 60.0,
+        "args": (),
+    }
+}

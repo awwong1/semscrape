@@ -185,7 +185,8 @@ $RECYCLE.BIN/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -220,3 +221,5 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+# Celery
+celerybeat-schedule.db
