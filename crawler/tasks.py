@@ -5,6 +5,7 @@ import feedparser
 import requests
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from crawler.models import RSSEntry, RSSFeed
@@ -16,22 +17,27 @@ def request_article(rss_entry, session=requests.Session(), timeout=8.0):
     """Perform the GET request and persist the HTML and meta in the database."""
     resp = None
     try:
-        resp = session.get(rss_entry.link, timeout=6.0)
+        resp = session.get(rss_entry.link, timeout=timeout)
     except requests.exceptions.Timeout:
         # connection to server timed out or server did not send data in time
         logger.warn(f"Request timeout for `{rss_entry}`")
-        return
     except requests.exceptions.RequestException as e:
         # arbitrary requests related exception
         logger.warn(f"Could not GET `{rss_entry}`: `{e}`")
 
-    if not resp:
+    if resp is None:
+        # request response not instantiated
         return
 
-    # response can be an http error, so we want to track this information also
+    # response can be an http error, so we want to track all the meta
+    content_type = resp.headers.get("Content-Type", "")
     raw_html = None
-    if resp.ok:
+
+    if "text" in content_type:
         raw_html = resp.text
+    else:
+        logger.warn(f"Unsupported Content-Type `{content_type}` from `{rss_entry}`")
+        raw_html = ""
 
     rss_entry, _ = RSSEntry.objects.update_or_create(
         pk=rss_entry.pk,
@@ -89,10 +95,20 @@ def retrieve_feed_entries(rss_feed_id):
 
 @shared_task
 def dispatch_crawl_entries():
-    """Iterate through all of the RSSEntries that don't have html and retry query"""
-    rss_entries = RSSEntry.objects.filter(raw_html__isnull=True)
+    """Iterate through valid RSSEntries that don't have html and retry query"""
+    missed_entries = RSSEntry.objects.filter(
+        Q(raw_html__isnull=True)  # raw_html is null AND
+        & (
+            # Content-Type header is null OR
+            Q(**{"headers__Content-Type__isnull": True})
+            |
+            # Content-Type header is textual
+            Q(**{"headers__Content-Type__icontains": "text"})
+        )
+    )
+
     session = requests.Session()
-    for rss_entry in rss_entries:
+    for rss_entry in missed_entries:
         request_article(rss_entry, session=session)
 
 
