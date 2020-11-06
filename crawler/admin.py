@@ -1,3 +1,5 @@
 from django.contrib import admin
+from crawler.models import RSSEntry, RSSFeed
 
-# Register your models here.
+admin.site.register(RSSFeed)
+admin.site.register(RSSEntry)

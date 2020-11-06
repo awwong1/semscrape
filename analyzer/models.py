@@ -16,3 +16,6 @@ class Article(models.Model):
     keywords = ArrayField(models.CharField(max_length=1024, null=False), default=list)
     author = models.CharField(max_length=2048, null=True, default=None)
     body = models.TextField(null=True, default=None)
+
+    def __str__(self):
+        return f"`{self.title}` by `{self.author}`"

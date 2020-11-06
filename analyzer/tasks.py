@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from crawler.models import RSSEntry
+from django.db.models import Q
 
 from analyzer.models import Article
 
@@ -35,6 +36,8 @@ def find_title(soup):
 
     title = None
     if len(possible_titles):
+        # trim all leading and trailing whitespace from candidates
+        possible_titles = [pt.strip() for pt in possible_titles]
         title, _ = Counter(possible_titles).most_common(n=1)[0]
     return title
 
@@ -48,6 +51,7 @@ def find_keywords(soup):
     if tag and tag["content"]:
         keywords.extend(tag["content"].split(","))
 
+    keywords = [kw.strip() for kw in keywords]
     return keywords
 
 
@@ -57,7 +61,7 @@ def find_author(soup):
     # check <meta content="Name" name=".*author" />
     tag = soup.find("meta", attrs={"name": re.compile(r".*author")})
     if tag and tag["content"]:
-        return tag["content"]
+        return tag["content"].strip()
 
     return None
 
@@ -68,7 +72,9 @@ def find_article_body(soup):
     body = []
     for article_tag in article_tags:
         body.extend(article_tag.strings)
+
     if body:
+        body = [line.strip() for line in body]
         return " ".join(body)
     return None
 
@@ -98,7 +104,12 @@ def parse_html_entry(rss_entry_id):
 @shared_task
 def dispatch_parse_html_entries():
     """Find entries that have not been parse_html'd dispatch parse_html task"""
-    missed_entries = RSSEntry.objects.exclude(raw_html__isnull=True)
-    missed_entries = missed_entries.filter(article__isnull=True)
+    missed_entries = RSSEntry.objects.exclude(
+        Q(raw_html__isnull=True)  # Exclude where raw_html is null OR
+        | Q(article__isnull=False)  # article has already been parsed
+    ).filter(
+        # Handle where Content-Type header is textual
+        **{"headers__Content-Type__icontains": "text/html"}
+    )
     for entry in missed_entries.iterator():
         parse_html_entry.delay(entry.pk)

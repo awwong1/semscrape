@@ -3,12 +3,12 @@ from time import mktime
 
 import feedparser
 import requests
+from analyzer.tasks import parse_html_entry
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.db.models import Q
 from django.utils.timezone import make_aware
 
-from analyzer.tasks import parse_html_entry
 from crawler.models import RSSEntry, RSSFeed
 
 logger = get_task_logger(__name__)
@@ -94,7 +94,8 @@ def retrieve_feed_entries(rss_feed_id):
             rss_entry = request_article(rss_entry, session=session)
 
         if not hasattr(rss_entry, "article"):
-            parse_html_entry.delay(rss_entry.pk)
+            if "html" in rss_entry.headers.get("Content-Type"):
+                parse_html_entry.delay(rss_entry.pk)
 
 
 @shared_task
@@ -107,7 +108,7 @@ def dispatch_crawl_entries():
             Q(**{"headers__Content-Type__isnull": True})
             |
             # Content-Type header is textual
-            Q(**{"headers__Content-Type__icontains": "text"})
+            Q(**{"headers__Content-Type__icontains": "text/html"})
         )
     )
 

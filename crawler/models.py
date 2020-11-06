@@ -34,3 +34,6 @@ class RSSEntry(models.Model):
     status_code = models.IntegerField(null=True)  # HTTP status code
     requested_at = models.DateTimeField(null=True)  # Latest request datetime
     headers = models.JSONField(db_index=True, default=dict)  # HTTP response headers
+
+    def __str__(self):
+        return f"{self.link} (HTTP {self.status_code})"
