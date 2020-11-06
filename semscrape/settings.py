@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "crawler"
+    "crawler",
 ]
 
 MIDDLEWARE = [
@@ -136,7 +136,12 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     "dispatch_rss_feed_crawlers": {
         "task": "crawler.tasks.dispatch_crawl_feeds",
-        "schedule": 60.0,
+        "schedule": 60.0 * 10,
         "args": (),
-    }
+    },
+    "dispatch_rss_entry_crawlers": {
+        "task": "crawler.tasks.dispatch_crawl_entries",
+        "schedule": 60.0 * 2,
+        "args": (),
+    },
 }
