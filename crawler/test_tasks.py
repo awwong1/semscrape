@@ -11,7 +11,7 @@ class CrawlerTasksTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         crawler_dir = os.path.dirname(os.path.realpath(__file__))
-        test_data_dir = os.path.join(crawler_dir, "test_data")
+        test_data_dir = os.path.join(crawler_dir, "..", "test_data")
 
         stub_xml_fp = os.path.join(test_data_dir, "rss_feed.xml")
         bad_lead_fp = os.path.join(test_data_dir, "rss_feed_key_err.xml")
