@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_elasticsearch_dsl",
     "crawler",
+    "analyzer",
 ]
 
 MIDDLEWARE = [
@@ -144,4 +146,17 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 60.0 * 2,
         "args": (),
     },
+    "dispatch_article_parsers": {
+        "task": "analyzer.tasks.dispatch_parse_html_entries",
+        "schedule": 60.0 * 2,
+        "args": (),
+    }
+}
+
+# Django Elasticsearch Settings
+ELASTICSEARCH_HOST = os.environ.get("ELASTICSEARCH_HOST", "localhost")
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": f"{ELASTICSEARCH_HOST}:9200"
+    }
 }

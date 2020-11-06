@@ -8,6 +8,7 @@ from celery.utils.log import get_task_logger
 from django.db.models import Q
 from django.utils.timezone import make_aware
 
+from analyzer.tasks import parse_html_entry
 from crawler.models import RSSEntry, RSSFeed
 
 logger = get_task_logger(__name__)
@@ -49,7 +50,7 @@ def request_article(rss_entry, session=requests.Session(), timeout=8.0):
             "headers": dict(resp.headers),
         },
     )
-    return resp.ok
+    return rss_entry
 
 
 @shared_task
@@ -90,7 +91,10 @@ def retrieve_feed_entries(rss_feed_id):
             },
         )
         if not rss_entry.raw_html:
-            request_article(rss_entry, session=session)
+            rss_entry = request_article(rss_entry, session=session)
+
+        if not hasattr(rss_entry, "article"):
+            parse_html_entry.delay(rss_entry.pk)
 
 
 @shared_task
@@ -108,12 +112,12 @@ def dispatch_crawl_entries():
     )
 
     session = requests.Session()
-    for rss_entry in missed_entries:
+    for rss_entry in missed_entries.iterator():
         request_article(rss_entry, session=session)
 
 
 @shared_task
 def dispatch_crawl_feeds():
     """Iterate through all of the RSSFeeds and dispatch a task for each one."""
-    for rss_feed in RSSFeed.objects.all():
+    for rss_feed in RSSFeed.objects.all().iterator():
         retrieve_feed_entries.delay(rss_feed.pk)

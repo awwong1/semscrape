@@ -1,6 +1,7 @@
 version: "3.8"
-   
+
 services:
+  # Database persistence
   postgresdb:
     image: postgres:13.0-alpine
     environment:
@@ -9,18 +10,29 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+  # Celery broker
   redis:
     image: redis:6.0.9-alpine3.12
     command: redis-server
-    ports:
-      - "6379:6379"
     environment:
       - REDIS_REPLICATION_MODE=master
+    ports:
+      - "6379:6379"
+  # Elasticsearch, for document query/search
+  elastic:
+    image: elasticsearch:7.9.3
+    environment:
+      - discovery.type=single.node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  # Django web application
   web:
     build: .
     environment:
       - POSTGRES_HOST=postgresdb
       - REDIS_HOST=redis
+      - ELASTICSEARCH_HOST=elastic
     command:
       - /bin/bash
       - -c
@@ -34,20 +46,26 @@ services:
     links:
       - postgresdb
       - redis
+      - elastic
     depends_on:
       - postgresdb
       - redis
+      - elastic
+  # Celery worker (periodic tasks beat)
   celery:
     build: .
     environment:
       - POSTGRES_HOST=postgresdb
       - REDIS_HOST=redis
+      - ELASTICSEARCH_HOST=elastic
     command:
       celery -A semscrape worker --beat --loglevel=INFO
     links:
       - redis
       - postgresdb
+      - elastic
     depends_on:
       - web
       - postgresdb
       - redis
+      - elastic

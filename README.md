@@ -8,6 +8,8 @@ To quickly run a development version of the application:
 
 ```bash
 docker-compose build
+docker-compose run web python manage.py migrate
+docker-compose run web python manage.py search_index --rebuild # enter Y at prompt
 docker-compose up
 ```
 
@@ -49,6 +51,19 @@ docker run \
   --detach \
   redis:6.0.9-alpine3.12 \
   redis-server
+
+# elasticsearch image
+docker pull elasticsearch:7.9.3
+mkdir -p ${HOME}/docker/volumes/elasticsearch_data
+docker run \
+  --rm \
+  --name elasticsearch \
+  --env "discovery.type=single-node" \
+  --publish 9200:9200 \
+  --publish 9300:9300 \
+  --volume ${HOME}/docker/volumes/elasticsearch_data:/usr/share/elasticsearch/data \
+  --detach \
+  elasticsearch:7.9.3
 
 # celery worker (not detached)
 celery -A semscrape worker --beat --loglevel=INFO
