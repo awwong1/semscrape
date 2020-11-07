@@ -28,7 +28,7 @@ str_debug = os.environ.get("DJANGO_DEBUG", "True")
 if str_debug.upper() in ["F", "FALSE"]:
     DEBUG = False
 
-ALLOWED_HOSTS = ["localhost:8000", "0.0.0.0:8000"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0"]
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_elasticsearch_dsl",
+    "rest_framework",
+    "django_elasticsearch_dsl_drf",
     "crawler",
     "analyzer",
 ]
@@ -130,6 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Celery configuration options
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")

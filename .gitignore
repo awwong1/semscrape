@@ -229,3 +229,6 @@ redis_conf
 redis_data
 elastic_data
 postgres_data
+
+# Static Files
+static

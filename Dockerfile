@@ -1,4 +1,5 @@
-FROM python:3.7
+# Prepare django app to be multi-staged for Server/Web-Client separation
+FROM python:3.7 as semscrape
 ENV PYTHONUNBUFFERED=1
 
 # create a non-root user for running the app

@@ -46,9 +46,12 @@ services:
       - 9300:9300
   # Django web application
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: semscrape
     environment:
-      - DJANGO_DEBUG=false
+      - DJANGO_DEBUG=true
       - POSTGRES_HOST=postgresdb
       - REDIS_HOST=redis
       - ELASTIC_HOST=elastic
@@ -57,7 +60,7 @@ services:
       - -c
       - |
         python manage.py migrate
-        python manage.py runserver 0.0.0.0:8000
+        python manage.py runserver --insecure 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
@@ -72,7 +75,10 @@ services:
       - elastic
   # Celery worker (periodic tasks beat)
   celery:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: semscrape
     environment:
       - DJANGO_DEBUG=false
       - POSTGRES_HOST=postgresdb

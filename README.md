@@ -4,11 +4,12 @@ MuckRack take home assignment. Create a Django web application to scrape a web p
 
 ## Quickstart
 
-To quickly run a development version of the application:
+To quickly run a development (`DEBUG=False`) version of the application:
 
 ```bash
 docker-compose build
 docker-compose run web python manage.py migrate
+docker-compose run web python manage.py collectstatic
 docker-compose up
 
 # In new terminal
@@ -20,6 +21,10 @@ docker-compose run web python manage.py fetchrssnow
 docker-compose run web python manage.py createsuperuser
 
 ```
+
+A development version of the site should now be available at `localhost:8000`.
+Sample API Query:
+http://localhost:8000/search/articles/?format=json&limit=10&search=tesla
 
 ### Developer Setup
 

@@ -21,3 +21,14 @@ class Article(models.Model):
 
     def __str__(self):
         return f"`{self.title}` by `{self.author}`"
+
+    @property
+    def publication_date(self):
+        """Return an estimate of the article publication date."""
+        return self.rss_entry.pub_date or self.rss_entry.requested_at
+
+    @property
+    def overall_sentiment(self):
+        """Return the overall sentiment of the article if defined."""
+        # TODO
+        self.sentiment.values()
