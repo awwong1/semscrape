@@ -24,8 +24,11 @@ SECRET_KEY = "vpx5cj6j(8=9(ef99z6$zuxh@yf+5uvs3z9+j!#^q1f4*9nns("
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+str_debug = os.environ.get("DJANGO_DEBUG", "True")
+if str_debug.upper() in ["F", "FALSE"]:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost:8000", "0.0.0.0:8000"]
 
 
 # Application definition
@@ -138,7 +141,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     "dispatch_rss_feed_crawlers": {
         "task": "crawler.tasks.dispatch_crawl_feeds",
-        "schedule": 60.0 * 10,
+        "schedule": 60.0 * 30,
         "args": (),
     },
     "dispatch_rss_entry_crawlers": {
@@ -150,13 +153,14 @@ CELERY_BEAT_SCHEDULE = {
         "task": "analyzer.tasks.dispatch_parse_html_entries",
         "schedule": 60.0 * 2,
         "args": (),
-    }
+    },
+    "dispatch_sentiment_computers": {
+        "task": "analyzer.tasks.dispatch_compute_sentiments",
+        "schedule": 60.0 * 2,
+        "args": (),
+    },
 }
 
 # Django Elasticsearch Settings
-ELASTICSEARCH_HOST = os.environ.get("ELASTICSEARCH_HOST", "localhost")
-ELASTICSEARCH_DSL = {
-    "default": {
-        "hosts": f"{ELASTICSEARCH_HOST}:9200"
-    }
-}
+ELASTIC_HOST = os.environ.get("ELASTIC_HOST", "localhost")
+ELASTICSEARCH_DSL = {"default": {"hosts": f"{ELASTIC_HOST}:9200"}}

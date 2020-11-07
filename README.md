@@ -9,8 +9,16 @@ To quickly run a development version of the application:
 ```bash
 docker-compose build
 docker-compose run web python manage.py migrate
-docker-compose run web python manage.py search_index --rebuild # enter Y at prompt
 docker-compose up
+
+# In new terminal
+# To rebuild the elastic search indices
+docker-compose run web python manage.py search_index --rebuild # enter y at prompt
+# To immediately trigger an RSSFeed crawl (otherwise occurs every 30 mins)
+docker-compose run web python manage.py fetchrssnow
+# To create a superuser for the admin site
+docker-compose run web python manage.py createsuperuser
+
 ```
 
 ### Developer Setup

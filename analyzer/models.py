@@ -6,7 +6,6 @@ from django.db import models
 
 class Article(models.Model):
     """Human-readable text extracted from RSSEntry, search document"""
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # cannot use as PK due to elasticsearch serialization gotcha
@@ -16,6 +15,9 @@ class Article(models.Model):
     keywords = ArrayField(models.CharField(max_length=1024, null=False), default=list)
     author = models.CharField(max_length=2048, null=True, default=None)
     body = models.TextField(null=True, default=None)
+
+    # store all of the sentiment per string fragment within body
+    sentiment = models.JSONField(default=dict)
 
     def __str__(self):
         return f"`{self.title}` by `{self.author}`"

@@ -11,19 +11,40 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('crawler', '0004_rssentry_dl_html'),
+        ("crawler", "0004_rssentry_dl_html"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Article',
+            name="Article",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('title', models.CharField(default=None, max_length=2048, null=True)),
-                ('keywords', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=1024), default=list, size=None)),
-                ('author', models.CharField(default=None, max_length=2048, null=True)),
-                ('body', models.TextField(default=None, null=True)),
-                ('rss_entry', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='crawler.rssentry')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("title", models.CharField(default=None, max_length=2048, null=True)),
+                (
+                    "keywords",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=1024),
+                        default=list,
+                        size=None,
+                    ),
+                ),
+                ("author", models.CharField(default=None, max_length=2048, null=True)),
+                ("body", models.TextField(default=None, null=True)),
+                (
+                    "rss_entry",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="crawler.rssentry",
+                    ),
+                ),
             ],
         ),
     ]

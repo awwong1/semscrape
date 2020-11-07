@@ -223,3 +223,9 @@ pip-selfcheck.json
 
 # Celery
 celerybeat-schedule.db
+
+# Docker Volumes
+redis_conf
+redis_data
+elastic_data
+postgres_data
