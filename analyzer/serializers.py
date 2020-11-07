@@ -9,4 +9,14 @@ class ArticleDocumentSerializer(DocumentSerializer):
     class Meta(object):
         document = ArticleDocument
 
-        fields = ("id", "title", "author", "keywords", "body")
+        fields = (
+            "id",
+            "url",
+            "title",
+            "author",
+            "publication_date",
+            "overall_sentiment",
+            "keywords",
+            "body",
+            "sentiment",
+        )

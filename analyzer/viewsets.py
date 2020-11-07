@@ -34,7 +34,8 @@ class ArticleDocumentView(BaseDocumentViewSet):
 
     filter_backends = [
         CompoundSearchFilterBackend,
-        FilteringFilterBackend
+        FilteringFilterBackend,
+        OrderingFilterBackend,
     ]
 
     # Define search fields
@@ -56,11 +57,4 @@ class ArticleDocumentView(BaseDocumentViewSet):
         },
     }
 
-    # # Define ordering fields
-    # ordering_fields = {
-    #     "_id": "_id",
-    #     "title": "title",
-    #     "author": "author",
-    #     "keywords": "keywords",
-    #     "body": "body",
-    # }
+    ordering_fields = {"publication_date": "publication_date", "title": "title"}

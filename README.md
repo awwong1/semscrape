@@ -23,8 +23,6 @@ docker-compose run web python manage.py createsuperuser
 ```
 
 A development version of the site should now be available at `localhost:8000`.
-Sample API Query:
-http://localhost:8000/search/articles/?format=json&limit=10&search=tesla
 
 ### Developer Setup
 
@@ -81,7 +79,17 @@ docker run \
 # celery worker (not detached)
 celery -A semscrape worker --beat --loglevel=INFO
 ```
+#### Search API Endpoint
 
+A Django Rest Framework API for searching ElasticSearch is available at
+`/search/articles/`.
+Some example API calls:
+- `/search/articles/?limit=10&search=tesla&format=json`
+    - Return first 10 articles containing 'tesla'
+- `/search/articles/?limit=10&ordering=-publication_date&format=json`
+    - Return first 10 articles ordered by descending publication date
+- `/search/articles/4412e95a-abca-4014-aef2-879fdcf58d50/?format=json`
+    - Return a single article
 #### Testing
 
 ```bash
