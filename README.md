@@ -85,11 +85,12 @@ A Django Rest Framework API for searching ElasticSearch is available at
 `/search/articles/`.
 Some example API calls:
 - `/search/articles/?limit=10&search=tesla&format=json`
-    - Return first 10 articles containing 'tesla'
-- `/search/articles/?limit=10&ordering=-publication_date&format=json`
-    - Return first 10 articles ordered by descending publication date
-- `/search/articles/4412e95a-abca-4014-aef2-879fdcf58d50/?format=json`
+    - Return first 10 articles containing 'tesla', ensure JSON returned
+- `/search/articles/?limit=10&offset=20&ordering=-publication_date`
+    - Return 10 articles (offset by 20 articles) ordered by descending publication date
+- `/search/articles/4412e95a-abca-4014-aef2-879fdcf58d50/`
     - Return a single article
+
 #### Testing
 
 ```bash

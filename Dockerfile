@@ -31,3 +31,24 @@ np_str=['Hi!', 'I\'m Alex.', 'Please hire me!'];\
 print(*list(zip(np_str, nlp(*np_str))), sep='\n')"
 
 COPY . /code/
+
+# Web Client Stage
+FROM node:14.15.0 as semscrape-client
+
+ARG UNAME=semscrape
+ARG UID=1000
+ARG GID=1000
+RUN groupadd -g $GID -o $UNAME
+RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
+RUN mkdir -p /code/client
+RUN chown -R $UID:$GID /code/client
+USER $UNAME
+
+WORKDIR /code/client
+COPY ./client/package.json /code/client/
+COPY ./client/yarn.lock /code/client/
+
+# build the web application
+RUN yarn
+COPY ./client /code/client
+CMD yarn build

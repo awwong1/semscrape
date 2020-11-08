@@ -44,6 +44,14 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+  # Container for JavaScript SPA
+  web-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: semscrape-client
+    volumes:
+      - .:/code
   # Django web application
   web:
     build:
@@ -70,6 +78,7 @@ services:
       - redis
       - elastic
     depends_on:
+      - web-client
       - postgresdb
       - redis
       - elastic
