@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect
 
 
 def redirect_to_index(request):
-    print("why?")
     return HttpResponseRedirect("/app/index.html")
 
 

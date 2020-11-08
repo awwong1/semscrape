@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl",
     "rest_framework",
     "django_elasticsearch_dsl_drf",
+    "corsheaders",
     "crawler",
     "analyzer",
 ]
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -169,3 +171,13 @@ CELERY_BEAT_SCHEDULE = {
 # Django Elasticsearch Settings
 ELASTIC_HOST = os.environ.get("ELASTIC_HOST", "localhost")
 ELASTICSEARCH_DSL = {"default": {"hosts": f"{ELASTIC_HOST}:9200"}}
+
+# Django CORS headers
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:3000",
+    "http://0.0.0.0:8000",
+    "http://0.0.0.0:3000",
+]
