@@ -2,9 +2,11 @@
 
 MuckRack take home assignment. Create a Django web application to scrape a web publication, perform article sentiment analysis, and enable users to search (main keyword association, products) scraped articles and view sentiment/relevant heuristics.
 
+[Example Usage](https://swift-yeg.cloud.cybera.ca:8080/v1/AUTH_e3b719b87453492086f32f5a66c427cf/media/2020/11/08/muck_rack_takehome_example.gif)
+
 ## Quickstart
 
-To quickly run a development (`DEBUG=False`) version of the application:
+To quickly run a development version of the application:
 
 ```bash
 docker-compose build
